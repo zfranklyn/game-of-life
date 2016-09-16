@@ -1,44 +1,49 @@
 // grid logic
 
-var Game = function(width, height){
-	this.table = new Table(width ,height);
-	this.initialize();
-}
+var Game = function(width, height) {
+	this.table = new Table(width, height);
+	this.reset();
+	this.isRunning = false;
+};
 
 
-Game.prototype.update = function(){
-	this.table.forEach(cell => {
+Game.prototype.step = function() {
 
-	});
-}
-
-Game.prototype.reset = function(){
-
-}
-
-Game.prototype.initialize = function(startPosition){
-	//TODO:
-	// initialize ALIVE property for every cell
-	this.table.forEach(cell => {
-		cell.className = "dead";
-	});
-
-}
-
-Game.prototype.getAliveNeighbors = function(cell){
-	let count = 0;
-
-	for (let deltax = -1; deltax < 2; deltax++) {
-		for (let deltay = -1; deltax < 2; deltax++) {
-			//if (deltax != deltay) {
-				let neighbor = this.table.getCell(cell.x + deltax, cell.y + deltay);
-				if (neighbor && neighbor !== cell && neighbor.className === "alive") {
-					count++;
-				}
-			//}
-		}
+	let newBoard = new Array(this.table.height);
+	for (let i = 0; i < this.table.height; i++) {
+		newBoard[i] = new Array(this.table.width);
 	}
 
-	return count;
-}
+	this.table.forEach(cell => {
+		let numNeighbors = this.table.getAliveNeighbors(cell);
 
+		if (numNeighbors < 2) {
+			//dies
+			newBoard[cell.y][cell.x] = 'dead';
+		}
+		else if (numNeighbors > 3) {
+			//dies
+			newBoard[cell.y][cell.x] = 'dead';
+		}
+		else if (numNeighbors === 3) {
+			//dead, exactly 3 neighbors => alive
+			newBoard[cell.y][cell.x] = 'alive';
+		}
+		else {
+			newBoard[cell.y][cell.x] = cell.className;
+		}
+	});
+
+	for (let row = 0; row < this.table.height; row++) {
+		for (let col = 0; col < this.table.width; col++) {
+			this.table.getCell(col, row).className = newBoard[row][col];
+		}
+	}
+};
+
+Game.prototype.reset = function() {
+	this.table.forEach(cell => {
+		cell.className = (Math.random() < 0.2) ? 'alive':'dead';
+	});
+	this.isRunning = false;
+};
