@@ -30,12 +30,12 @@ Game.prototype.getAliveNeighbors = function(cell){
 
 	for (let deltax = -1; deltax < 2; deltax++) {
 		for (let deltay = -1; deltax < 2; deltax++) {
-			if (deltax != deltay) {
+			//if (deltax != deltay) {
 				let neighbor = this.table.getCell(cell.x + deltax, cell.y + deltay);
-				if (neighbor && neighbor.className === "alive") {
+				if (neighbor && neighbor !== cell && neighbor.className === "alive") {
 					count++;
 				}
-			}
+			//}
 		}
 	}
 
